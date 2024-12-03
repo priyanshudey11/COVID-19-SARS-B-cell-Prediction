@@ -1,0 +1,112 @@
+---
+title: "Epitope Prediction Project"
+author: 
+    - "Priyanshu Dey"
+    - "Adam Torres Encarnacion"
+    - "Elizabeth Marchini"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+# Epitope Prediction Using Generalized Linear Models and Multilevel Models
+
+This report outlines the analysis and modeling of the epitope prediction dataset, structured into two main parts: Generalized Linear Models (GLMs) and Multilevel Modeling.
+
+## Table of Contents
+1. [Introduction](#introduction)
+2. [Exploratory Data Analysis (EDA)](#eda)
+3. [Part 1: Generalized Linear Models (GLMs)](#glm)
+4. [Part 2: Multilevel Modeling](#multilevel)
+5. [Conclusion](#conclusion)
+6. [Appendix](#appendix)
+
+## Introduction {#introduction}
+
+
+## Exploratory Data Analysis (EDA) {#eda}
+###
+
+```{r}
+# clear workspace
+rm(list = ls()) 
+# load libraries
+library(tidyverse)
+
+```
+### Data Importing 
+```{r}
+cat("COVID-19 B-Cell Epitope Prediction Data")
+cat("bcells data")
+bcells <- read.csv("Data/input_bcell.csv")
+colnames(bcells)
+cat("covid data")
+covid <- read.csv("Data/input_covid.csv")
+colnames(covid)
+cat("sars data")
+sars <- read.csv("Data/input_sars.csv")
+colnames(sars)
+```
+### Data Cleaning
+
+### Data Description
+Our chosen dataset – COVID-19/SARS B-cell Epitope Prediction – analyzes antibody-inducing activity given 10 features/predictors. This dataset was developed as part of Future’s research endeavors in 2020 and served as a way for data analysts to get involved in the search for a cure for the COVID-19 virus. It has since been made available on Kaggle. The dataset describes whether an amino acid peptide exhibited antibody-inducing activity (marked by an activity label). The original dataset contained five categories, including four classes of “Positive,” which the researchers combined into one. This attributes the task to a simple binary classification, suitable for this project.
+Chosen dataset: [COVID-19/SARS B-cell Epitope Prediction](https://www.kaggle.com/datasets/futurecorporation/epitope-prediction/data)
+Dataset analysis-  due december 3rd
+Variables
+start_position (peptide)
+• end_position (peptide)
+• chou_fasman (peptide)
+• emini (peptide)
+• kolaskar_tongaonkar (peptide)
+• parker (peptide)
+• isoelectric_point (protein)
+• aromacity (protein)
+• stability (protein)
+
+## Part 1: Generalized Linear Models (GLMs) {#glm}
+
+### Research Question and Hypotheses
+How accurately can amino acid peptides and parent proteins predict whether
+a peptide exhibits antibody-inducing activity (antibody valence = 1) in the context of COVID- 19/SARS vaccine development? 
+
+
+### Model Building
+
+
+
+### Results
+
+
+### Discussion
+
+
+## Part 2: Multilevel Modeling {#multilevel}
+
+### Research Question and Hypotheses
+
+
+### Data Structuring
+
+
+### Model Building
+
+
+### Results
+
+
+
+### Discussion
+
+
+## Conclusion {#conclusion}
+
+
+
+## Appendix {#appendix}
+
+
+
+
+### References
+
+
