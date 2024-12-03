@@ -7,7 +7,7 @@ Repository Structure
 data/: Contains the dataset files used in the analysis.
 scripts/: Includes R scripts for data processing, analysis, and modeling.
 reports/: Holds the final reports and presentation materials.
-README.md: This file, providing an overview of the project.
+README.md: This file, provides an overview of the project.
 Dataset
 The dataset comprises sequences and associated information pertinent to B-cell epitope prediction. For detailed information, refer to the dataset's Kaggle page.
 
@@ -39,16 +39,17 @@ Install the required packages:
 install.packages(c("tidyverse"," "))
 ```
 ## Contributions
-This project was completed as part of the STAT 400 Statistical Modeling II course. Under the guidance and instructions Matt Slifko 
+This project was completed as part of the STAT 400 Statistical Modeling II course. Under the guidance and instructions of Dr. Mattew Slifko (mds6457@psu.edu)
 
 Group members include:
 
 - Priyanshu Dey: pkd5228@psu.edu
 - Elizabeth Marchini: erm5580@psu.edu
 - Adam Torres Encarnacion : art5809@psu.edu
+
 Each member contributed to data analysis, model development, and report preparation.
 
 ## Acknowledgments
 We extend our gratitude to the creators of the COVID-19/SARS B-cell Epitope Prediction dataset for providing the data that made this analysis possible.
 
-For any questions or further information, please contact pkd5228@psu.edu.
+For any questions or further information,please contact any of the group members.
