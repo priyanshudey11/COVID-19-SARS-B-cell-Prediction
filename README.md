@@ -1,5 +1,4 @@
-
-Epitope Prediction Project
+# Epitope Prediction Project
 This repository contains the analysis and modeling efforts for predicting B-cell epitopes using the COVID-19/SARS B-cell Epitope Prediction dataset. The project is structured in two main parts:
 
 Generalized Linear Models (GLMs): Development and evaluation of GLMs to predict epitope presence.
@@ -12,7 +11,7 @@ README.md: This file, providing an overview of the project.
 Dataset
 The dataset comprises sequences and associated information pertinent to B-cell epitope prediction. For detailed information, refer to the dataset's Kaggle page.
 
-Project Components
+# Project Components
 1. Generalized Linear Models (GLMs)
 Exploratory Data Analysis (EDA): Initial examination of data distributions and relationships among variables.
 Model Building: Construction of GLMs suitable for binary outcomes, such as logistic regression models.
@@ -39,7 +38,7 @@ Ensure that you have R installed, then use the following command to install requ
 R Packages
 install.packages(c("tidyverse"," "))
 
-Contributions
+# Contributions
 This project was completed as part of the STAT 400 Statistical Modeling II course. Under the guidence and instructions Matt Slifko 
 
 Group members include:
@@ -49,7 +48,7 @@ Elizabeth Marchini: erm5580@psu.edu
 Adam Torres Encarnacion : art5809@psu.edu
 Each member contributed to data analysis, model development, and report preparation.
 
-Acknowledgments
+# Acknowledgments
 We extend our gratitude to the creators of the COVID-19/SARS B-cell Epitope Prediction dataset for providing the data that made this analysis possible.
 
 For any questions or further information, please contact pkd5228@psu.edu.
