@@ -12,11 +12,11 @@ Dataset
 The dataset comprises sequences and associated information pertinent to B-cell epitope prediction. For detailed information, refer to the dataset's Kaggle page.
 
 ## Project Components
-1. Generalized Linear Models (GLMs)
+- 1. Generalized Linear Models (GLMs)
 Exploratory Data Analysis (EDA): Initial examination of data distributions and relationships among variables.
 Model Building: Construction of GLMs suitable for binary outcomes, such as logistic regression models.
 Model Evaluation: Assessment of model performance using metrics like accuracy, precision, recall, and AUC-ROC.
-2. Multilevel Modeling
+- 2. Multilevel Modeling
 Hierarchical Data Structuring: Identification of nested data structures to inform model design.
 Model Specification: Definition of fixed and random effects to capture both population-level and group-level variations.
 Model Assessment: Evaluation of model fit and comparison with non-hierarchical models to determine the added value of multilevel modeling.
@@ -34,19 +34,19 @@ Copy code
 cd COVID-19-SARS-B-cell-Prediction
 Install necessary R packages:
 
-Ensure that you have R installed, then use the following command to install required packages:
+Ensure that you have R installed, then use the following command to install the required packages:
 
 R Packages
 install.packages(c("tidyverse"," "))
 
 ## Contributions
-This project was completed as part of the STAT 400 Statistical Modeling II course. Under the guidence and instructions Matt Slifko 
+This project was completed as part of the STAT 400 Statistical Modeling II course. Under the guidance and instructions Matt Slifko 
 
 Group members include:
 
-Priyanshu Dey: pkd5228@psu.edu
-Elizabeth Marchini: erm5580@psu.edu
-Adam Torres Encarnacion : art5809@psu.edu
+- Priyanshu Dey: pkd5228@psu.edu
+- Elizabeth Marchini: erm5580@psu.edu
+- Adam Torres Encarnacion : art5809@psu.edu
 Each member contributed to data analysis, model development, and report preparation.
 
 ## Acknowledgments
