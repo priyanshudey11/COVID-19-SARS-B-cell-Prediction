@@ -25,20 +25,19 @@ Model Assessment: Evaluation of model fit and comparison with non-hierarchical m
 Clone the repository:
 
 bash
-Copy code
+```
 git clone https://github.com/priyanshudey11/COVID-19-SARS-B-cell-Prediction.git
+```
 Navigate to the project directory:
 
-bash
-Copy code
+```
 cd COVID-19-SARS-B-cell-Prediction
-Install necessary R packages:
-
-Ensure that you have R installed, then use the following command to install the required packages:
-
-R Packages
+```
+Install Nessary R packages
+Install the required packages:
+```
 install.packages(c("tidyverse"," "))
-
+```
 ## Contributions
 This project was completed as part of the STAT 400 Statistical Modeling II course. Under the guidance and instructions Matt Slifko 
 
