@@ -402,10 +402,7 @@ library(tidyverse)</code></pre>
 </div>
 <div id="data-importing" class="section level3">
 <h3>Data Importing</h3>
-<pre class="r"><code>cat(&quot;COVID-19 B-Cell Epitope Prediction Data&quot;)</code></pre>
-<pre><code>## COVID-19 B-Cell Epitope Prediction Data</code></pre>
-<pre class="r"><code>cat(&quot;bcells data&quot;)</code></pre>
-<pre><code>## bcells data</code></pre>
+<p>Bcells colnames</p>
 <pre class="r"><code>bcells &lt;- read.csv(&quot;Data/input_bcell.csv&quot;)
 colnames(bcells)</code></pre>
 <pre><code>##  [1] &quot;parent_protein_id&quot;   &quot;protein_seq&quot;         &quot;start_position&quot;     
@@ -413,8 +410,7 @@ colnames(bcells)</code></pre>
 ##  [7] &quot;emini&quot;               &quot;kolaskar_tongaonkar&quot; &quot;parker&quot;             
 ## [10] &quot;isoelectric_point&quot;   &quot;aromaticity&quot;         &quot;hydrophobicity&quot;     
 ## [13] &quot;stability&quot;           &quot;target&quot;</code></pre>
-<pre class="r"><code>cat(&quot;covid data&quot;)</code></pre>
-<pre><code>## covid data</code></pre>
+<p>Covid colnames</p>
 <pre class="r"><code>covid &lt;- read.csv(&quot;Data/input_covid.csv&quot;)
 colnames(covid)</code></pre>
 <pre><code>##  [1] &quot;parent_protein_id&quot;   &quot;protein_seq&quot;         &quot;start_position&quot;     
@@ -422,8 +418,7 @@ colnames(covid)</code></pre>
 ##  [7] &quot;emini&quot;               &quot;kolaskar_tongaonkar&quot; &quot;parker&quot;             
 ## [10] &quot;isoelectric_point&quot;   &quot;aromaticity&quot;         &quot;hydrophobicity&quot;     
 ## [13] &quot;stability&quot;</code></pre>
-<pre class="r"><code>cat(&quot;sars data&quot;)</code></pre>
-<pre><code>## sars data</code></pre>
+<p>Sars colnames</p>
 <pre class="r"><code>sars &lt;- read.csv(&quot;Data/input_sars.csv&quot;)
 colnames(sars)</code></pre>
 <pre><code>##  [1] &quot;parent_protein_id&quot;   &quot;protein_seq&quot;         &quot;start_position&quot;     

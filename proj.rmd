@@ -34,15 +34,18 @@ library(tidyverse)
 
 ```
 ### Data Importing 
+Bcells colnames
 ```{r}
-cat("COVID-19 B-Cell Epitope Prediction Data")
-cat("bcells data")
 bcells <- read.csv("Data/input_bcell.csv")
 colnames(bcells)
-cat("covid data")
+```
+Covid colnames
+```{r}
 covid <- read.csv("Data/input_covid.csv")
 colnames(covid)
-cat("sars data")
+```
+Sars colnames
+```{r}
 sars <- read.csv("Data/input_sars.csv")
 colnames(sars)
 ```
