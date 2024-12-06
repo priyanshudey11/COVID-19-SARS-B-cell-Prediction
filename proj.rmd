@@ -85,6 +85,20 @@ bcells <- bcells %>%
          iso = isoelectric_point,
          aroma = aromaticity,
          hydro = hydrophobicity) 
+sars <- sars %>%
+  rename(kt = kolaskar_tongaonkar, 
+         start = start_position,
+         end = end_position,
+         iso = isoelectric_point,
+         aroma = aromaticity,
+         hydro = hydrophobicity) 
+covid <- covid %>%
+  rename(kt = kolaskar_tongaonkar, 
+         start = start_position,
+         end = end_position,
+         iso = isoelectric_point,
+         aroma = aromaticity,
+         hydro = hydrophobicity) 
 
 
 #i made a basic linear model and did some EDA Plots
