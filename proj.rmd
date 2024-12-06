@@ -69,8 +69,7 @@ start_position (peptide)
 ## Part 1: Generalized Linear Models (GLMs) {#glm}
 
 ### Research Question and Hypotheses
-How accurately can amino acid peptides and parent proteins predict whether
-a peptide exhibits antibody-inducing activity (antibody valence = 1) in the context of COVID- 19/SARS vaccine development? 
+How accurately can amino acid peptides and parent proteins predict whether a peptide exhibits antibody-inducing activity (antibody valence = 1) in the context of COVID- 19/SARS vaccine development? 
 
 
 ### Model Building
