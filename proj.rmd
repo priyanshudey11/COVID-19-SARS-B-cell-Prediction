@@ -56,15 +56,15 @@ Our chosen dataset – COVID-19/SARS B-cell Epitope Prediction – analyzes anti
 Chosen dataset: [COVID-19/SARS B-cell Epitope Prediction](https://www.kaggle.com/datasets/futurecorporation/epitope-prediction/data)
 Dataset analysis-  due december 3rd
 Variables
-start_position (peptide)
-• end_position (peptide)
-• chou_fasman (peptide)
-• emini (peptide)
-• kolaskar_tongaonkar (peptide)
-• parker (peptide)
-• isoelectric_point (protein)
-• aromacity (protein)
-• stability (protein)
+• start_position (peptide): quantitative value of the number of peptides into the sequence the protein starts
+• end_position (peptide): quantitative value of the number of peptides into the sequence the protein ends
+• chou_fasman (peptide): quantitative value of the beta turns feature from peptide information
+• emini (peptide): quantitative value of the surface accessibility feature from peptide information
+• kolaskar_tongaonkar (peptide): quantitative value of the antigenicity feature from peptide information
+• parker (peptide): quantitative value of the hydrophobicity feature from peptide information
+• isoelectric_point (protein): quantitative value of the isoelectric point of the protein 
+• aromacity (protein): quantitative value of the aromaticity of the protein 
+• stability (protein): quantitative value of the stability of the protein
 
 ## Part 1: Generalized Linear Models (GLMs) {#glm}
 
