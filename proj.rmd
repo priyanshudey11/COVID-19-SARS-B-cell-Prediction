@@ -121,13 +121,12 @@ confint(model1, level = 0.95)
 
 
 ```
-Residual vs Fitted analysis: huge violations for linearity and constant variance with the presence of 3 potential outliers.
-
+Residual vs Fitted analysis: 
+The resudals appear to have a funnel chape suggesting hetroscdasticy where the variabltiy of the Residual is not constant across the fitted values. This is a violation of the assumption of homoscedasticity.
 Q-Q Plot analysis: 
-
+The plot shows that there is a signfigant devation from the digonal line suggesting that the residuals are not normally distributed. This is a violation of the assumption of normality.
 Cook's Distance: 
-
-
+The cooks distance shows that there are 3 influential points in the data such as 8469, 9892, and 11326. These points are likely to have a large impact on the model.
 
 
 
