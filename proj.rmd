@@ -86,7 +86,7 @@ bcells <-
          iso = isoelectric_point,
          aroma = aromaticity,
          hydro = hydrophobicity) %>%
-  mutate(pep_lenght = (end - start))
+  mutate(pep_length = (end - start))
 
 sars <- sars %>%
   rename(kt = kolaskar_tongaonkar, 
@@ -95,7 +95,7 @@ sars <- sars %>%
          iso = isoelectric_point,
          aroma = aromaticity,
          hydro = hydrophobicity) %>%
-  mutate(pep_lenght = (end - start))
+  mutate(pep_length = (end - start))
 
 
 covid <- covid %>%
@@ -105,7 +105,7 @@ covid <- covid %>%
          iso = isoelectric_point,
          aroma = aromaticity,
          hydro = hydrophobicity) %>%
-  mutate(pep_lenght = (end - start))
+  mutate(pep_length = (end - start))
 
 
 #i made a basic linear model and did some EDA Plots
