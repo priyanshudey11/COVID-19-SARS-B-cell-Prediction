@@ -75,6 +75,29 @@ a peptide exhibits antibody-inducing activity (antibody valence = 1) in the cont
 
 ### Model Building
 
+```{r}
+#things elizabeth did to just share with the group
+#first thing I did was rename the some of the variables for easier typing! if you guys dont
+#want this no worries
+bcells <- bcells %>%
+  rename(kt = kolaskar_tongaonkar, 
+         start = start_position,
+         end = end_position,
+         iso = isoelectric_point,
+         aroma = aromaticity,
+         hydro = hydrophobicity) 
+
+
+#i made a basic linear model and did some EDA Plots
+model1 <- lm(target ~ start + end + chou_fasman + emini + kt + parker + iso + aroma + hydro + stability, data = bcells)
+summary(model1)
+
+plot(model1, which = c(1:2,4))
+
+
+```
+
+
 
 
 ### Results
