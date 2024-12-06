@@ -109,9 +109,8 @@ covid <- covid %>%
 
 
 #i made a basic linear model and did some EDA Plots
-model1 <- lm(target ~ start + end + chou_fasman + emini + kt + parker + iso + aroma + hydro + stability, data = bcells)
+model1 <- lm(target ~ chou_fasman + emini + kt + parker + iso + aroma + hydro + stability + pep_length, data = bcells)
 summary(model1)
-
 
 plot(model1, which = c(1:2,4))
 
@@ -122,6 +121,12 @@ confint(model1, level = 0.95)
 
 
 ```
+Residual vs Fitted analysis: huge violations for linearity and constant variance with the presence of 3 potential outliers.
+
+Q-Q Plot analysis: 
+
+Cook's Distance: 
+
 
 
 
