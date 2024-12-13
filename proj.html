@@ -13,7 +13,7 @@
 <meta name="author" content="Adam Torres Encarnacion" />
 <meta name="author" content="Elizabeth Marchini" />
 
-<meta name="date" content="2024-12-06" />
+<meta name="date" content="2024-12-07" />
 
 <title>Epitope Prediction Project</title>
 
@@ -356,7 +356,7 @@ display: none;
 <h4 class="author">Priyanshu Dey</h4>
 <h4 class="author">Adam Torres Encarnacion</h4>
 <h4 class="author">Elizabeth Marchini</h4>
-<h4 class="date">2024-12-06</h4>
+<h4 class="date">2024-12-07</h4>
 
 </div>
 
@@ -467,8 +467,8 @@ quantitative value of the stability of the protein</p>
 whether a peptide exhibits antibody-inducing activity (antibody valence
 = 1) in the context of COVID- 19/SARS vaccine development?</p>
 </div>
-<div id="model-building" class="section level3">
-<h3>Model Building</h3>
+<div id="intial-model-building" class="section level3">
+<h3>Intial Model Building</h3>
 <pre class="r"><code>#things Elizabeth did to just share with the group
 #first thing I did was rename the some of the variables for easier typing! if you guys dont
 #want this no worries
@@ -546,10 +546,17 @@ summary(model1)</code></pre>
 ## hydro        0.120782442  0.164553067
 ## stability    0.002071587  0.003033290
 ## pep_length   0.003625973  0.008693461</code></pre>
-<p>Residual vs Fitted analysis: huge violations for linearity and
-constant variance with the presence of 3 potential outliers.</p>
-<p>Q-Q Plot analysis:</p>
-<p>Cook’s Distance:</p>
+<p>Residual vs Fitted analysis: The resudals appear to have a funnel
+chape suggesting hetroscdasticy where the variabltiy of the Residual is
+not constant across the fitted values. This is a violation of the
+assumption of homoscedasticity. Q-Q Plot analysis: The plot shows that
+there is a signfigant devation from the digonal line suggesting that the
+residuals are not normally distributed. This is a violation of the
+assumption of normality. Cook’s Distance: The cooks distance shows that
+there are 3 influential points in the data such as 8469, 9892, and
+11326. These points are likely to have a large impact on the model. ###
+Data cleaning</p>
+<pre class="r"><code>#</code></pre>
 </div>
 <div id="results" class="section level3">
 <h3>Results</h3>
@@ -566,7 +573,7 @@ constant variance with the presence of 3 potential outliers.</p>
 <div id="data-structuring" class="section level3">
 <h3>Data Structuring</h3>
 </div>
-<div id="model-building-1" class="section level3">
+<div id="model-building" class="section level3">
 <h3>Model Building</h3>
 </div>
 <div id="results-1" class="section level3">
