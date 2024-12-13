@@ -54,8 +54,11 @@ colnames(sars)
 
 ### Data Description
 Our chosen dataset – COVID-19/SARS B-cell Epitope Prediction – analyzes antibody-inducing activity given 10 features/predictors. This dataset was developed as part of Future’s research endeavors in 2020 and served as a way for data analysts to get involved in the search for a cure for the COVID-19 virus. It has since been made available on Kaggle. The dataset describes whether an amino acid peptide exhibited antibody-inducing activity (marked by an activity label). The original dataset contained five categories, including four classes of “Positive,” which the researchers combined into one. This attributes the task to a simple binary classification, suitable for this project.
+
+
 Chosen dataset: [COVID-19/SARS B-cell Epitope Prediction](https://www.kaggle.com/datasets/futurecorporation/epitope-prediction/data)
-Dataset analysis-  due december 3rd
+
+
 Variables
 • start_position (peptide): quantitative value of the number of peptides into the sequence the protein starts
 • end_position (peptide): quantitative value of the number of peptides into the sequence the protein ends
@@ -143,14 +146,13 @@ summary(model1)
 
 plot(model1, which = c(1:2,4))
 confint(model1, level = 0.95)
-
-
-
 ```
 Residual vs Fitted analysis: 
-The resudals appear to have a funnel chape suggesting hetroscdasticy where the variabltiy of the Residual is not constant across the fitted values. This is a violation of the assumption of homoscedasticity.
+The residuals appear to have a funnel shape, suggesting hetroscdasticy where the variability of the Residual is not constant across the fitted values. This is a violation of the assumption of homoscedasticity.
+
 Q-Q Plot analysis: 
-The plot shows that there is a signfigant devation from the digonal line suggesting that the residuals are not normally distributed. This is a violation of the assumption of normality.
+The plot shows that there is a significant deviation from the diagonal line, suggesting that the residuals are not normally distributed. This is a violation of the assumption of normality.
+
 Cook's Distance: 
 The cooks distance shows that there are 3 influential points in the data such as 8469, 9892, and 11326. These points are likely to have a large impact on the model.
 
@@ -167,16 +169,52 @@ step(model1,direction ='both')
 
 ### Results
 
-
 ### Discussion
 
 
 ## Part 2: Multilevel Modeling {#multilevel}
 
+The data set chosen for part 2 is the reaction time dataset, which observes the reaction time for people in the study to react to a change in a picture viewing task.
+
+
+Variables
+
+Response: Reaction time
+Level 1 Observational Unit: Picture they were observing
+Level 2 Observational Unit:  Each person in the study
+Level 1 Variables: meaning, salience, c_mean, c_sal
+Level 2 Variables: id, sex, age,oldage, yrs65
+Fixed Effect: old age, salience
+Random Effect: Person in study (id)
+
+
+
 ### Research Question and Hypotheses
 
+What is the association with painting salience and reaction time?
 
-### Data Structuring
+Does the association between painting salience and reaction time differ based on old age?
+
+
+
+### Data Structuring 
+
+```{r}
+rtdata <- read.csv("https://raw.githubusercontent.com/mkshaw/learn-mlms/master/data/hoffman2007.csv")
+
+#need to make salience a 01 type data structure; between 1 and 5 so maybe if painting salience is less than 2.5 and greater than equal to 2.5
+
+head(rtdata)
+
+
+rtdata <- 
+  rtdata %>%
+  mutate(salience2 = ifelse(salience >= 2.5, 1,0))
+
+
+
+```
+
 
 
 ### Model Building
