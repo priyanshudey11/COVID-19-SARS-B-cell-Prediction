@@ -43,7 +43,7 @@ cd COVID-19-SARS-B-cell-Prediction
 ```
 Install Nessary R packages
 ```
-install.packages(c("tidyverse"," "))
+install.packages(c("tidyverse","dplyr","ggplot2","car"))
 ```
 ### Update the Repository with New Changes
 Add New Files: Add any new or modified files to the staging area:
