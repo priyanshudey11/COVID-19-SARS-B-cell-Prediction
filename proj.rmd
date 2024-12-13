@@ -31,6 +31,7 @@ This report outlines the analysis and modeling of the epitope prediction dataset
 rm(list = ls()) 
 # load libraries
 library(tidyverse)
+library(car)
 
 ```
 ### Data Importing 
@@ -130,6 +131,7 @@ bcells %>%
   ggplot(aes(x = value)) +
   geom_histogram() +
   facet_wrap(~feature, scales = "free")
+vif(model1)
 
 ```
 #Basic model Building
