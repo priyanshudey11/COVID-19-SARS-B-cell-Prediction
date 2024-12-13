@@ -171,7 +171,18 @@ Does the association between painting salience and reaction time differ based on
 ### Data Structuring 
 
 ```{r}
-read.csv("https://raw.githubusercontent.com/mkshaw/learn-mlms/master/data/hoffman2007.csv")
+rtdata <- read.csv("https://raw.githubusercontent.com/mkshaw/learn-mlms/master/data/hoffman2007.csv")
+
+#need to make salience a 01 type data structure; between 1 and 5 so maybe if painting salience is less than 2.5 and greater than equal to 2.5
+
+head(rtdata)
+
+
+rtdata <- 
+  rtdata %>%
+  mutate(salience2 = ifelse(salience >= 2.5, 1,0))
+
+
 
 ```
 
