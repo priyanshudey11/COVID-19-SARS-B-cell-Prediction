@@ -1,0 +1,75 @@
+## PART 2
+
+```{r}
+library(tidyverse)
+library(gridExtra)
+
+rtdata <- read.csv("https://raw.githubusercontent.com/mkshaw/learn-mlms/master/data/hoffman2007.csv")
+
+#need to make salience a 01 type data structure; between 1 and 5 so maybe if painting salience is less than 2.5 and greater than equal to 2.5
+rtdata <- 
+  rtdata %>%
+  mutate(salience = ifelse(salience >= 2.5, 1,0))
+
+
+head(rtdata)
+
+ggplot(rtdata) +
+  aes(x = rt_sec) +
+  geom_histogram(bins = 30L, fill = "#112446") +
+  theme_minimal()
+
+
+```
+#DO QQ plot
+
+The Random Intercepts Model
+```{r}
+#random intercepts model
+RImodel <- lmer(rt_sec ~ 1 + (1|id), data = rtdata)
+
+summary(RImodel)
+
+```
+
+Inter-class correlation coefficient calculation
+```{r}
+var_hat <- 53.44
+var_uhat <- 12.31
+  
+phat <- var_uhat/ (var_uhat+var_hat)
+# the closer this number is to 1, the more evidence we have to use a multilevel model
+print(phat)
+```
+
+
+Our fixed effect parameter was 7.4402, which represents the average reaction time across all individuals all ages.
+
+Our inter-class correlation Coefficient Calculation showed that 18.72% of total variation in reaction time score is due to the difference in person.
+
+
+Random Slopes and Intercept model
+
+```{r}
+RSImodel <- lmer(rt_sec ~ salience + (1 + salience|id), REML = TRUE, data = rtdata)
+summary(RSImodel)
+
+```
+
+Based on the random slopes and intercepts model, we expect reaction time to decrease by 1.09984 on average for images with a salience greater than 2.5. The more salient a picture is means the more obvious the change will be so this indicates that as the image get clearer the reaction time decreases. 
+
+
+
+Model 3- REML = False
+```{r}
+RSImodel <- lmer(rt_sec ~ salience + oldage + oldage:salience + (1 + salience|id), REML = FALSE, data = rtdata)
+summary(RSImodel)
+
+
+AIC(RSImodel)
+BIC(RSImodel)
+```
+
+
+
+

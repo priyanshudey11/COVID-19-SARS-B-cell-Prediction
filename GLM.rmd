@@ -1,0 +1,283 @@
+---
+title: "Epitope Prediction Project"
+author: 
+    - "Priyanshu Dey"
+    - "Adam Torres Encarnacion"
+    - "Elizabeth Marchini"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+# Epitope Prediction Using Generalized Linear Models and Multilevel Models
+
+This report outlines the analysis and modeling of the epitope prediction dataset, structured into two main parts: Generalized Linear Models (GLMs) and Multilevel Modeling.
+
+## Table of Contents
+1. [Introduction](#introduction)
+2. [Exploratory Data Analysis (EDA)](#eda)
+3. [Part 1: Generalized Linear Models (GLMs)](#glm)
+4. [Part 2: Multilevel Modeling](#multilevel)
+5. [Conclusion](#conclusion)
+6. [Appendix](#appendix)
+
+## Introduction {#introduction}
+
+
+## Exploratory Data Analysis (EDA) {#eda}
+### Libary Loading
+
+```{r}
+# clear workspace
+rm(list = ls()) 
+# load libraries
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(MASS)
+#library(car)
+```
+### Data Importing 
+Bcells colnames
+```{r}
+bcells <- read.csv("Data/input_bcell.csv")
+colnames(bcells)
+```
+Covid colnames
+```{r}
+covid <- read.csv("Data/input_covid.csv")
+colnames(covid)
+```
+Sars colnames
+```{r}
+sars <- read.csv("Data/input_sars.csv")
+colnames(sars)
+```
+### Data Cleaning
+
+### Data Description
+Our chosen dataset – COVID-19/SARS B-cell Epitope Prediction – analyzes antibody-inducing activity given 10 features/predictors. This dataset was developed as part of Future’s research endeavors in 2020 and served as a way for data analysts to get involved in the search for a cure for the COVID-19 virus. It has since been made available on Kaggle. The dataset describes whether an amino acid peptide exhibited antibody-inducing activity (marked by an activity label). The original dataset contained five categories, including four classes of “Positive,” which the researchers combined into one. This attributes the task to a simple binary classification, suitable for this project.
+
+
+Chosen dataset: [COVID-19/SARS B-cell Epitope Prediction](https://www.kaggle.com/datasets/futurecorporation/epitope-prediction/data)
+
+
+Variables
+• start_position (peptide): quantitative value of the number of peptides into the sequence the protein starts
+• end_position (peptide): quantitative value of the number of peptides into the sequence the protein ends
+• chou_fasman (peptide): quantitative value of the beta turns feature from peptide information
+• emini (peptide): quantitative value of the surface accessibility feature from peptide information
+• kolaskar_tongaonkar (peptide): quantitative value of the antigenicity feature from peptide information
+• parker (peptide): quantitative value of the hydrophobicity feature from peptide information
+• isoelectric_point (protein): quantitative value of the isoelectric point of the protein 
+• aromacity (protein): quantitative value of the aromaticity of the protein 
+• stability (protein): quantitative value of the stability of the protein
+
+## Part 1: Generalized Linear Models (GLMs) {#glm}
+
+### Research Question and Hypotheses
+How accurately can amino acid peptides and parent proteins predict whether a peptide exhibits antibody-inducing activity (antibody valence = 1) in the context of COVID-19/SARS vaccine development?
+
+**Hypotheses:**
+
+- **Null Hypothesis (H₀):** Amino acid peptides and parent proteins do not significantly predict antibody-inducing activity.
+
+- **Alternative Hypothesis (H₁):** Amino acid peptides and parent proteins significantly predict antibody-inducing activity.
+
+### Initial Data Check and Cleaning
+
+```{r}
+# Check for missing values
+colSums(is.na(bcells))
+colSums(is.na(sars))
+colSums(is.na(covid))
+
+# Remove duplicates
+bcells <- bcells %>% distinct()
+sars <- sars %>% distinct()
+covid <- covid %>% distinct()
+
+# Rename columns and add peptide length
+bcells <- bcells %>%
+  rename(kt = kolaskar_tongaonkar, 
+         start = start_position,
+         end = end_position,
+         iso = isoelectric_point,
+         aroma = aromaticity,
+         hydro = hydrophobicity) %>%
+  mutate(pep_length = (end - start))
+
+sars <- sars %>%
+  rename(kt = kolaskar_tongaonkar, 
+         start = start_position,
+         end = end_position,
+         iso = isoelectric_point,
+         aroma = aromaticity,
+         hydro = hydrophobicity) %>%
+  mutate(pep_length = (end - start))
+
+covid <- covid %>%
+  rename(kt = kolaskar_tongaonkar, 
+         start = start_position,
+         end = end_position,
+         iso = isoelectric_point,
+         aroma = aromaticity,
+         hydro = hydrophobicity) %>%
+  mutate(pep_length = (end - start))
+
+# Normalize numeric columns
+bcells <- bcells %>%
+  mutate(across(where(is.numeric), scale))
+
+# Visualize distributions
+bcells %>%
+  pivot_longer(cols = chou_fasman:pep_length, names_to = "feature", values_to = "value") %>%
+  ggplot(aes(x = value)) +
+  geom_histogram() +
+  facet_wrap(~feature, scales = "free")
+```
+
+### Initial Model Building and Diagnostics
+
+```{r}
+# Ensure target variable is strictly positive
+bcells <- bcells %>% mutate(target = target + abs(min(target, na.rm = TRUE)) + 1)
+
+# 1. Linear Model
+model_linear <- lm(target ~ chou_fasman + emini + kt + parker + iso + aroma + hydro + stability + pep_length, data = bcells)
+summary(model_linear)
+
+# 2. Log Transformation
+model_log <- lm(log(target) ~ chou_fasman + emini + kt + parker + iso + aroma + hydro + stability + pep_length, data = bcells)
+summary(model_log)
+
+# 3. Square Root Transformation
+model_sqrt <- lm(sqrt(target) ~ chou_fasman + emini + kt + parker + iso + aroma + hydro + stability + pep_length, data = bcells)
+summary(model_sqrt)
+
+# 4. Box-Cox Transformation
+boxcox(model_linear, lambda = seq(-2, 2, 0.1))
+# Select the suggested lambda from the Box-Cox plot (e.g., lambda = 0.5)
+optimal_lambda <- 0.5
+bcells <- bcells %>% mutate(target_boxcox = ifelse(optimal_lambda == 0,
+                                                  log(target),
+                                                  (target^optimal_lambda - 1) / optimal_lambda))
+model_boxcox <- lm(target_boxcox ~ chou_fasman + emini + kt + parker + iso + aroma + hydro + stability + pep_length, data = bcells)
+summary(model_boxcox)
+
+# Diagnostics for all models
+par(mfrow = c(2, 2))
+plot(model_linear, main = "Linear Model")
+plot(model_log, main = "Log Transformation")
+plot(model_sqrt, main = "Square Root Transformation")
+plot(model_boxcox, main = "Box-Cox Transformation")
+
+# Compare Models
+anova(model_linear, model_log, model_sqrt, model_boxcox)
+
+```
+
+
+
+
+### Model Refinement
+
+```{r,eval=FALSE}
+# Stepwise selection to refine model
+model_refined <- step(model1, direction = 'both')
+summary(model_refined)
+
+# Interaction terms
+model_interactions <- lm(target ~ chou_fasman * kt + emini + iso + aroma, data = bcells)
+summary(model_interactions)
+
+# Final model diagnostics
+par(mfrow = c(2, 2))
+plot(model_refined)
+```
+
+### Results
+
+```{r,eval=FALSE}
+# Confidence intervals for final model
+confint(model_refined, level = 0.95)
+
+# Visualize actual vs. predicted values
+predicted <- predict(model_refined, newdata = bcells)
+bcells <- bcells %>% mutate(predicted = predicted)
+
+ggplot(bcells, aes(x = predicted, y = target)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(title = "Actual vs Predicted", x = "Predicted", y = "Actual")
+```
+
+### Discussion
+
+
+## Part 2: Multilevel Modeling {#multilevel}
+
+The data set chosen for part 2 is the reaction time dataset, which observes the reaction time for people in the study to react to a change in a picture viewing task.
+
+
+Variables
+
+Response: Reaction time
+Level 1 Observational Unit: Picture they were observing
+Level 2 Observational Unit:  Each person in the study
+Level 1 Variables: meaning, salience, c_mean, c_sal
+Level 2 Variables: id, sex, age,oldage, yrs65
+Fixed Effect: old age, salience
+Random Effect: Person in study (id)
+
+
+
+### Research Question and Hypotheses
+
+What is the association with painting salience and reaction time?
+
+Does the association between painting salience and reaction time differ based on old age?
+
+
+
+### Data Structuring 
+
+```{r}
+rtdata <- read.csv("https://raw.githubusercontent.com/mkshaw/learn-mlms/master/data/hoffman2007.csv")
+
+#need to make salience a 01 type data structure; between 1 and 5 so maybe if painting salience is less than 2.5 and greater than equal to 2.5
+
+head(rtdata)
+
+
+rtdata <- 
+  rtdata %>%
+  mutate(salience2 = ifelse(salience >= 2.5, 1,0))
+
+
+
+```
+
+
+
+### Model Building
+
+
+### Results
+
+
+
+### Discussion
+
+
+## Conclusion {#conclusion}
+
+
+
+## Appendix {#appendix}
+
+
+
+
+### References
+
+
