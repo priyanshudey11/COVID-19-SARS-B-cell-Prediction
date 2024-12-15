@@ -2,6 +2,7 @@
 
 ```{r}
 library(tidyverse)
+library(GGally)
 library(gridExtra)
 library(lme4)
 
@@ -16,13 +17,15 @@ rtdata <- rtdata %>%
 ```
 
 ```{r}
-ggplot(rtdata) +
-  aes(x = rt_sec) +
-  geom_histogram(bins = 30L, fill = "#112446") +
-  theme_minimal()
-```
+# Select numeric variables for the scatterplot matrix
+numeric_vars <- rtdata %>%
+                select(age, salience, rt_sec, meaning, c_mean, c_sal)
 
-#DO QQ plot
+# Create the scatterplot matrix
+ggpairs(numeric_vars, 
+        aes(color = as.factor(salience), alpha = 0.7)) +
+        theme_minimal()
+```
 
 ```{r}
 #random intercepts model
