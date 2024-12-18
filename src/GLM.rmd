@@ -12,13 +12,6 @@ output: html_document
 
 This report outlines the analysis and modeling of the epitope prediction dataset, structured into two main parts: Generalized Linear Models (GLMs) and Multilevel Modeling.
 
-## Table of Contents
-1. [Introduction](#introduction)
-2. [Exploratory Data Analysis (EDA)](#eda)
-3. [Part 1: Generalized Linear Models (GLMs)](#glm)
-4. [Part 2: Multilevel Modeling](#multilevel)
-5. [Conclusion](#conclusion)
-6. [Appendix](#appendix)
 
 ## Introduction {#introduction}
 ### Research Question and Hypotheses
@@ -32,8 +25,11 @@ How accurately can amino acid peptides and parent proteins predict whether a pep
 
 ## Exploratory Data Analysis (EDA) {#eda}
 ### Library Loading and Data Import
-
-```{r}
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T,
+                           results = "hide")
+```
+```{r,warning=FALSE, message=FALSE}
 # clear workspace
 rm(list = ls()) 
 # load libraries
@@ -44,8 +40,8 @@ library(MASS)
 ```
 
 ### Data Importing and Cleaning
-```{r}
-bcells <- read.csv("Data/input_bcell.csv")
+```{r,warning=FALSE, message=FALSE}
+bcells <- read.csv("C:/School/Stat 400/Proj/COVID-19-SARS-B-cell-Prediction/Data/input_bcell.csv")
 
 # Rename columns and calculate peptide length
 bcells <- bcells %>%
@@ -77,14 +73,15 @@ summary(bcells)
 # Residual Diagnostics
 
 ### Poisson GLM Modeling
-```{r}
+```{r, results = 'hide',warning=FALSE, message=FALSE}
 # Poisson regression model
 poisson_model <- glm(target ~ chou_fasman + emini + kt + parker + iso + aroma + hydro + stability + pep_length, 
                      family = poisson(link = "log"), data = bcells)
 
 # Model summary
 summary(poisson_model)
-
+```
+```{r, results = 'hide'}
 # Check for Overdispersion
 pearson_residuals <- residuals(poisson_model, type = "pearson")
 overdispersion <- sum(pearson_residuals^2) / poisson_model$df.residual
@@ -92,7 +89,7 @@ cat("Overdispersion Statistic:", round(overdispersion, 2), "\n")
 ```
 
 ### : Residual Diagnostics and QQ Plots
-```{r}
+```{r,warning=FALSE, message=FALSE}
 # 1. Residuals vs Fitted
 plot(poisson_model$fitted.values, residuals(poisson_model, type = "pearson"),
      xlab = "Fitted Values", ylab = "Pearson Residuals",
@@ -139,7 +136,7 @@ The residuals are centered around zero but exhibit skewness, particularly with m
 This indicates that some observations may have higher-than-expected counts, contributing to the model’s limitations.
 ### Conclusion
 The Poisson GLM assumptions are not fully met, as evidenced by the residual diagnostics. The model shows signs of overdispersion, non-constant variance, and non-normality in the residuals. Further model refinement or alternative modeling approaches may be necessary to improve the fit and predictive performance.
-```{r}
+```{r, results = 'hide',warning=FALSE, message=FALSE}  
 # Load required library for Negative Binomial
 
 # Fit Negative Binomial model
@@ -159,7 +156,7 @@ print(nb_results)
 
 ```
 
-```{r}
+```{r,warning=FALSE, message=FALSE}
 # Set up a 2x2 plot layout for diagnostics
 par( mfrow= c(2, 2))
 
