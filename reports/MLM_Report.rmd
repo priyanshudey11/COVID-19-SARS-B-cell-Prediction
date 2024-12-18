@@ -4,6 +4,7 @@ author: "Adam, Priyanshu, Elizabeth"
 date: "2024-12-17"
 output:
   pdf_document: default
+  word_document: default
   html_document: default
 ---
 
@@ -49,4 +50,29 @@ We can interpret this by saying that 18.72% of the total variation in reaction t
 A random slopes and intercepts model was fitted to examine the effect of salience on reaction time while allowing for individual variability in slopes. Here's how our model was specified: 
 
 $$ RT_{ij} = \beta_0 + \beta_1 \cdot \text{salience}_{ij}+u_{0j} + u_{1j} \cdot \text{salience}_{ij}+\epsilon_{ij}$$
+This time, the observed effect of salience was $-1.0998$, indicating that for salient images (`salience` $= 1$), reaction time decreases on average by $1.10$ seconds. This is expected; the more salient an image (e.g., clearer or more obvious), the faster participants react.
+
+## Model 3: Random Slopes with Age Interaction
+
+A third model is needed to test our second research question, which aims to find the association between salience, given age. Here is the specification: 
+
+$$
+RT_{ij} = \beta_0 + \beta_1 \cdot \text{sal}_{ij} + \beta_2 \cdot \text{old}_{ij} + \beta_3 \cdot (\text{old} \cdot \text{sal}) +u_{0j} + u_{1j} \cdot \text{sal}_{ij}+\epsilon_{ij}
+$$
+
+This time, we had a salience effect of $-1.098$. The interaction of `oldage` and `salience` was not strongly significant, suggesting age may not substantially alter the effect of salience.
+
+## Summary
+
+Summary of Models:
+
+- Random intercepts only: Basic structure showing individual variability.
+- Random slopes: Demonstrated the significant negative effect of salience on reaction time.
+- Interaction model: Explored but did not yield significant improvements.
+
+Future research could include additional predictors or focus on more granular age effects.
+
+
+
+
 
