@@ -21,10 +21,17 @@ This report outlines the analysis and modeling of the epitope prediction dataset
 6. [Appendix](#appendix)
 
 ## Introduction {#introduction}
+### Research Question and Hypotheses
 
+How accurately can amino acid peptides and parent proteins predict whether a peptide exhibits antibody-inducing activity (antibody valence = 1) in the context of COVID-19/SARS vaccine development?
+
+**Hypotheses:**
+
+- **Null Hypothesis (H₀):** Amino acid peptides and parent proteins do not significantly predict antibody-inducing activity.
+- **Alternative Hypothesis (H₁):** Amino acid peptides and parent proteins significantly predict antibody-inducing activity.
 
 ## Exploratory Data Analysis (EDA) {#eda}
-### Libary Loading
+### Library Loading and Data Import
 
 ```{r}
 # clear workspace
@@ -34,250 +41,171 @@ library(dplyr)
 library(ggplot2)
 library(tidyr)
 library(MASS)
-#library(car)
 ```
-### Data Importing 
-Bcells colnames
+
+### Data Importing and Cleaning
 ```{r}
 bcells <- read.csv("Data/input_bcell.csv")
-colnames(bcells)
+
+# Rename columns and calculate peptide length
+bcells <- bcells %>%
+  rename(kt = kolaskar_tongaonkar, 
+         start = start_position,
+         end = end_position,
+         iso = isoelectric_point,
+         aroma = aromaticity,
+         hydro = hydrophobicity) %>%
+  mutate(pep_length = (end - start))
+
+# Ensure target is valid for Poisson
+bcells <- bcells %>% mutate(target = pmax(target, 0))
+
+# Summary statistics
+summary(bcells)
 ```
-Covid colnames
-```{r}
-covid <- read.csv("Data/input_covid.csv")
-colnames(covid)
-```
-Sars colnames
-```{r}
-sars <- read.csv("Data/input_sars.csv")
-colnames(sars)
-```
-### Data Cleaning
-
-### Data Description
-Our chosen dataset – COVID-19/SARS B-cell Epitope Prediction – analyzes antibody-inducing activity given 10 features/predictors. This dataset was developed as part of Future’s research endeavors in 2020 and served as a way for data analysts to get involved in the search for a cure for the COVID-19 virus. It has since been made available on Kaggle. The dataset describes whether an amino acid peptide exhibited antibody-inducing activity (marked by an activity label). The original dataset contained five categories, including four classes of “Positive,” which the researchers combined into one. This attributes the task to a simple binary classification, suitable for this project.
 
 
-Chosen dataset: [COVID-19/SARS B-cell Epitope Prediction](https://www.kaggle.com/datasets/futurecorporation/epitope-prediction/data)
 
-
-Variables
-• start_position (peptide): quantitative value of the number of peptides into the sequence the protein starts
-• end_position (peptide): quantitative value of the number of peptides into the sequence the protein ends
-• chou_fasman (peptide): quantitative value of the beta turns feature from peptide information
-• emini (peptide): quantitative value of the surface accessibility feature from peptide information
-• kolaskar_tongaonkar (peptide): quantitative value of the antigenicity feature from peptide information
-• parker (peptide): quantitative value of the hydrophobicity feature from peptide information
-• isoelectric_point (protein): quantitative value of the isoelectric point of the protein 
-• aromacity (protein): quantitative value of the aromaticity of the protein 
-• stability (protein): quantitative value of the stability of the protein
+**Insight:** The histograms indicate varied distributions, with predictors like `kt` and `pep_length` appearing symmetric, while variables like `iso` and `emini` exhibit slight skewness.
 
 ## Part 1: Generalized Linear Models (GLMs) {#glm}
 
-### Research Question and Hypotheses
-How accurately can amino acid peptides and parent proteins predict whether a peptide exhibits antibody-inducing activity (antibody valence = 1) in the context of COVID-19/SARS vaccine development?
+### Assumptions for Poisson GLM
+1. **Count Data**: Target variable values are non-negative integers.
+2. **Mean = Variance**: Assumption holds for Poisson regression.
+3. **No Overdispersion**: Checked using Pearson residuals.
+# Residual Diagnostics
 
-**Hypotheses:**
-
-- **Null Hypothesis (H₀):** Amino acid peptides and parent proteins do not significantly predict antibody-inducing activity.
-
-- **Alternative Hypothesis (H₁):** Amino acid peptides and parent proteins significantly predict antibody-inducing activity.
-
-### Initial Data Check and Cleaning
-
+### Poisson GLM Modeling
 ```{r}
-# Check for missing values
-colSums(is.na(bcells))
-colSums(is.na(sars))
-colSums(is.na(covid))
+# Poisson regression model
+poisson_model <- glm(target ~ chou_fasman + emini + kt + parker + iso + aroma + hydro + stability + pep_length, 
+                     family = poisson(link = "log"), data = bcells)
 
-# Remove duplicates
-bcells <- bcells %>% distinct()
-sars <- sars %>% distinct()
-covid <- covid %>% distinct()
+# Model summary
+summary(poisson_model)
 
-# Rename columns and add peptide length
-bcells <- bcells %>%
-  rename(kt = kolaskar_tongaonkar, 
-         start = start_position,
-         end = end_position,
-         iso = isoelectric_point,
-         aroma = aromaticity,
-         hydro = hydrophobicity) %>%
-  mutate(pep_length = (end - start))
-
-sars <- sars %>%
-  rename(kt = kolaskar_tongaonkar, 
-         start = start_position,
-         end = end_position,
-         iso = isoelectric_point,
-         aroma = aromaticity,
-         hydro = hydrophobicity) %>%
-  mutate(pep_length = (end - start))
-
-covid <- covid %>%
-  rename(kt = kolaskar_tongaonkar, 
-         start = start_position,
-         end = end_position,
-         iso = isoelectric_point,
-         aroma = aromaticity,
-         hydro = hydrophobicity) %>%
-  mutate(pep_length = (end - start))
-
-# Normalize numeric columns
-bcells <- bcells %>%
-  mutate(across(where(is.numeric), scale))
-
-# Visualize distributions
-bcells %>%
-  pivot_longer(cols = chou_fasman:pep_length, names_to = "feature", values_to = "value") %>%
-  ggplot(aes(x = value)) +
-  geom_histogram() +
-  facet_wrap(~feature, scales = "free")
+# Check for Overdispersion
+pearson_residuals <- residuals(poisson_model, type = "pearson")
+overdispersion <- sum(pearson_residuals^2) / poisson_model$df.residual
+cat("Overdispersion Statistic:", round(overdispersion, 2), "\n")
 ```
 
-### Initial Model Building and Diagnostics
-
+### : Residual Diagnostics and QQ Plots
 ```{r}
-# Ensure target variable is strictly positive
-bcells <- bcells %>% mutate(target = target + abs(min(target, na.rm = TRUE)) + 1)
+# 1. Residuals vs Fitted
+plot(poisson_model$fitted.values, residuals(poisson_model, type = "pearson"),
+     xlab = "Fitted Values", ylab = "Pearson Residuals",
+     main = "Residuals vs Fitted")
+abline(h = 0, col = "red", lty = 2)
 
-# 1. Linear Model
-model_linear <- lm(target ~ chou_fasman + emini + kt + parker + iso + aroma + hydro + stability + pep_length, data = bcells)
-summary(model_linear)
+# 2. QQ Plot of Residuals
+qqnorm(residuals(poisson_model, type = "pearson"), main = "QQ Plot of Residuals")
+qqline(residuals(poisson_model, type = "pearson"), col = "red")
 
-# 2. Log Transformation
-model_log <- lm(log(target) ~ chou_fasman + emini + kt + parker + iso + aroma + hydro + stability + pep_length, data = bcells)
-summary(model_log)
+# 3. Scale-Location Plot
+plot(poisson_model$fitted.values, sqrt(abs(residuals(poisson_model, type = "pearson"))),
+     xlab = "Fitted Values", ylab = "Sqrt(|Pearson Residuals|)",
+     main = "Scale-Location Plot")
+abline(h = 0, col = "red", lty = 2)
 
-# 3. Square Root Transformation
-model_sqrt <- lm(sqrt(target) ~ chou_fasman + emini + kt + parker + iso + aroma + hydro + stability + pep_length, data = bcells)
-summary(model_sqrt)
+# 4. Histogram of Residuals
+# Residuals vs Fitted Plot
+plot(poisson_model$fitted.values, residuals(poisson_model, type = "pearson"),
+  main = "Residuals vs Fitted Plot for Poisson Model",
+  xlab = "Fitted Values",
+  ylab = "Pearson Residuals",
+  pch = 20, col = "blue")
+abline(h = 0, col = "red", lty = 2)
 
-# 4. Box-Cox Transformation
-boxcox(model_linear, lambda = seq(-2, 2, 0.1))
-# Select the suggested lambda from the Box-Cox plot (e.g., lambda = 0.5)
-optimal_lambda <- 0.5
-bcells <- bcells %>% mutate(target_boxcox = ifelse(optimal_lambda == 0,
-                                                  log(target),
-                                                  (target^optimal_lambda - 1) / optimal_lambda))
-model_boxcox <- lm(target_boxcox ~ chou_fasman + emini + kt + parker + iso + aroma + hydro + stability + pep_length, data = bcells)
-summary(model_boxcox)
-
-# Diagnostics for all models
-par(mfrow = c(2, 2))
-plot(model_linear, main = "Linear Model")
-plot(model_log, main = "Log Transformation")
-plot(model_sqrt, main = "Square Root Transformation")
-plot(model_boxcox, main = "Box-Cox Transformation")
-
-# Compare Models
-anova(model_linear, model_log, model_sqrt, model_boxcox)
-
+par(mfrow = c(1, 1))  # Reset layout
 ```
 
 
-
-
-### Model Refinement
-
-```{r,eval=FALSE}
-# Stepwise selection to refine model
-model_refined <- step(model1, direction = 'both')
-summary(model_refined)
-
-# Interaction terms
-model_interactions <- lm(target ~ chou_fasman * kt + emini + iso + aroma, data = bcells)
-summary(model_interactions)
-
-# Final model diagnostics
-par(mfrow = c(2, 2))
-plot(model_refined)
-```
-
-### Results
-
-```{r,eval=FALSE}
-# Confidence intervals for final model
-confint(model_refined, level = 0.95)
-
-# Visualize actual vs. predicted values
-predicted <- predict(model_refined, newdata = bcells)
-bcells <- bcells %>% mutate(predicted = predicted)
-
-ggplot(bcells, aes(x = predicted, y = target)) +
-  geom_point() +
-  geom_smooth(method = "lm", se = TRUE) +
-  labs(title = "Actual vs Predicted", x = "Predicted", y = "Actual")
-```
-
-### Discussion
-
-
-## Part 2: Multilevel Modeling {#multilevel}
-
-The data set chosen for part 2 is the reaction time dataset, which observes the reaction time for people in the study to react to a change in a picture viewing task.
-
-
-Variables
-
-Response: Reaction time
-Level 1 Observational Unit: Picture they were observing
-Level 2 Observational Unit:  Each person in the study
-Level 1 Variables: meaning, salience, c_mean, c_sal
-Level 2 Variables: id, sex, age,oldage, yrs65
-Fixed Effect: old age, salience
-Random Effect: Person in study (id)
-
-
-
-### Research Question and Hypotheses
-
-What is the association with painting salience and reaction time?
-
-Does the association between painting salience and reaction time differ based on old age?
-
-
-
-### Data Structuring 
-
-```{r}
-rtdata <- read.csv("https://raw.githubusercontent.com/mkshaw/learn-mlms/master/data/hoffman2007.csv")
-
-#need to make salience a 01 type data structure; between 1 and 5 so maybe if painting salience is less than 2.5 and greater than equal to 2.5
-
-head(rtdata)
-
-
-rtdata <- 
-  rtdata %>%
-  mutate(salience2 = ifelse(salience >= 2.5, 1,0))
-
-
-
-```
-
-
-
-### Model Building
 
 
 ### Results
+**Residuals vs Fitted Plot**
+The residuals show a curved pattern, suggesting a possible violation of the mean-variance assumption of the Poisson model.
+The systematic structure indicates that the model might not fully capture the relationship between predictors and the target variable.
+**QQ Plot of Residuals**
+Residuals deviate significantly from the red line, particularly in the tails.
+This suggests that the residuals are not normally distributed, which is expected in a Poisson model, as it assumes count data, not normality.
+**Scale-Location Plot**
+The pattern in the plot suggests non-constant variance, as residuals are unevenly spread across fitted values.
+This confirms that the variance increases with the fitted values, a common issue with Poisson models.
+**Histogram of Pearson Residuals**
+The residuals are centered around zero but exhibit skewness, particularly with more extreme positive values.
+This indicates that some observations may have higher-than-expected counts, contributing to the model’s limitations.
+### Conclusion
+The Poisson GLM assumptions are not fully met, as evidenced by the residual diagnostics. The model shows signs of overdispersion, non-constant variance, and non-normality in the residuals. Further model refinement or alternative modeling approaches may be necessary to improve the fit and predictive performance.
+```{r}
+# Load required library for Negative Binomial
+
+# Fit Negative Binomial model
+nb_model <- glm.nb(target ~ chou_fasman + emini + kt + parker + iso + aroma + hydro + stability + pep_length, 
+                   data = bcells)
+
+# Model summary
+summary(nb_model)
+
+# Extract and exponentiate coefficients to get rate ratios
+nb_coef <- exp(coef(nb_model))
+nb_results <- data.frame(Predictor = names(nb_coef),
+                         Exp_Coefficient = nb_coef,
+                         Coefficient = coef(nb_model))
+print(nb_results)
 
 
+```
 
-### Discussion
+```{r}
+# Set up a 2x2 plot layout for diagnostics
+par( mfrow= c(2, 2))
+
+# 1. Residuals vs Fitted
+plot(nb_model$fitted.values, residuals(nb_model, type = "pearson"),
+     xlab = "Fitted Values", ylab = "Pearson Residuals",
+     main = "Residuals vs Fitted", pch = 20, col = "black")
+abline(h = 0, col = "red", lty = 2)
+
+# 2. QQ Plot of Residuals
+qqnorm(residuals(nb_model, type = "pearson"), main = "QQ Plot of Residuals", pch = 20)
+qqline(residuals(nb_model, type = "pearson"), col = "red", lwd = 2)
+
+# 3. Scale-Location Plot
+plot(nb_model$fitted.values, sqrt(abs(residuals(nb_model, type = "pearson"))),
+     xlab = "Fitted Values", ylab = "Sqrt(|Pearson Residuals|)",
+     main = "Scale-Location Plot", pch = 20, col = "black")
+abline(h = 0, col = "red", lty = 2)
+
+# 4. Residuals vs Fitted Plot for Negative Binomial Model
+plot(nb_model$fitted.values, residuals(nb_model, type = "pearson"),
+     xlab = "Fitted Values", 
+     ylab = "Pearson Residuals", 
+     main = "Residuals vs Fitted for Negative Binomial Model",
+     pch = 20, col = "black")
+
+```
+**Residuals vs Fitted Plot**
+The residuals show a curved pattern, suggesting a possible violation of the mean-variance assumption of the Poisson model.
+The systematic structure indicates that the model might not fully capture the relationship between predictors and the target variable.
+**QQ Plot of Residuals**
+Residuals deviate significantly from the red line, particularly in the tails.
+This suggests that the residuals are not normally distributed, which is expected in a Poisson model, as it assumes count data, not normality.
+**Scale-Location Plot**
+The pattern in the plot suggests non-constant variance, as residuals are unevenly spread across fitted values.
+This confirms that the variance increases with the fitted values, a common issue with Poisson models.
+**Histogram of Pearson Residuals**
+The residuals are centered around zero but exhibit skewness, particularly with more extreme positive values.
+This indicates that some observations may have higher-than-expected counts, contributing to the model’s limitations.
 
 
-## Conclusion {#conclusion}
+### Results
+Initially, the Poisson GLM revealed patterns in the residual diagnostics—such as deviations in QQ plots and residuals vs. fitted plots—that suggested potential overdispersion and violations of key model assumptions. These issues indicated that a standard Poisson model may not fully capture the data’s underlying structure.
 
+Transitioning to a Negative Binomial model, which is more flexible in handling overdispersed count data, improved some aspects of model fit but still did not completely resolve the distributional challenges. Nevertheless, across both modeling attempts, certain predictors consistently emerged as significant. Notably, the chou_fasman and hydro predictors showed strong positive associations with the probability of inducing an antibody response. Additional variables, such as kt, iso, and pep_length, also demonstrated statistically significant but more moderate effects.
 
+From a hypothesis-testing perspective, these results lead us to reject the null hypothesis for key predictors, confirming that certain physicochemical and structural properties of peptides do influence immunogenicity. However, the persistent complexity in the residual diagnostics suggests that traditional GLMs—even with Negative Binomial adjustments—may only partially capture the true underlying relationships.
 
-## Appendix {#appendix}
-
-
-
-
-### References
-
-
+In conclusion, this analysis supports the importance of specific peptide-level features in predicting antibody-inducing activity.` significantly increase the likelihood of antibody-inducing activity, making them critical predictors in epitope prediction.
