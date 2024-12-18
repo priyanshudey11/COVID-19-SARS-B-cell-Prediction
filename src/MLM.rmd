@@ -19,7 +19,7 @@ rtdata <- rtdata %>%
 ```{r}
 # Select numeric variables for the scatterplot matrix
 numeric_vars <- rtdata %>%
-                select(age, salience, rt_sec, meaning, c_mean, c_sal)
+                dplyr::select(age, salience, rt_sec, meaning, c_mean, c_sal)
 
 # Create the scatterplot matrix
 ggpairs(numeric_vars, 
